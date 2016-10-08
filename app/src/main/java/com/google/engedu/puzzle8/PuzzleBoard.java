@@ -16,12 +16,37 @@ public class PuzzleBoard {
             { 0, 1 }
     };
     private ArrayList<PuzzleTile> tiles;
+    public int steps = 0;
+    public PuzzleBoard previous = null;
 
     PuzzleBoard(Bitmap bitmap, int parentWidth) {
+        int tempHeight = (int) (((float) parentWidth / (float) bitmap.getWidth()) * bitmap.getHeight());
+        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, parentWidth, tempHeight, false);
+        Bitmap squareBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, parentWidth, parentWidth);
+
+
+        int size = squareBitmap.getWidth() / NUM_TILES;
+
+
+        for (int i=0; i<NUM_TILES; i++){
+            for (int j=0; j<NUM_TILES; j++){
+                Bitmap chunk = Bitmap.createBitmap(squareBitmap, j * size, i * size, size, size);
+                if (i == NUM_TILES-1 && j == NUM_TILES-1){
+                    tiles.add(null);
+                } else {
+                    tiles.add(new PuzzleTile(chunk, NUM_TILES * i + j));
+                }
+            }
+        }
+
+
     }
 
     PuzzleBoard(PuzzleBoard otherBoard) {
         tiles = (ArrayList<PuzzleTile>) otherBoard.tiles.clone();
+        steps = otherBoard.steps + 1;
+        previous = otherBoard;
+
     }
 
     public void reset() {

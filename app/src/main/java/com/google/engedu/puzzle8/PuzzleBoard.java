@@ -1,9 +1,10 @@
 package com.google.engedu.puzzle8;
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
+        import android.graphics.Bitmap;
+        import android.graphics.Canvas;
+        import android.util.Log;
 
-import java.util.ArrayList;
+        import java.util.ArrayList;
 
 
 public class PuzzleBoard {
@@ -15,19 +16,17 @@ public class PuzzleBoard {
             { 0, -1 },
             { 0, 1 }
     };
-    private ArrayList<PuzzleTile> tiles;
+    public ArrayList<PuzzleTile> tiles = new ArrayList<>();
+    private String LOG_TAG = "DLG";
     public int steps = 0;
-    public PuzzleBoard previous = null;
+    public PuzzleBoard previousBoard = null;
 
     PuzzleBoard(Bitmap bitmap, int parentWidth) {
+        Log.d(LOG_TAG, "" + bitmap.getWidth());
         int tempHeight = (int) (((float) parentWidth / (float) bitmap.getWidth()) * bitmap.getHeight());
         Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, parentWidth, tempHeight, false);
         Bitmap squareBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, parentWidth, parentWidth);
-
-
         int size = squareBitmap.getWidth() / NUM_TILES;
-
-
         for (int i=0; i<NUM_TILES; i++){
             for (int j=0; j<NUM_TILES; j++){
                 Bitmap chunk = Bitmap.createBitmap(squareBitmap, j * size, i * size, size, size);
@@ -38,19 +37,20 @@ public class PuzzleBoard {
                 }
             }
         }
-
-
     }
 
     PuzzleBoard(PuzzleBoard otherBoard) {
         tiles = (ArrayList<PuzzleTile>) otherBoard.tiles.clone();
         steps = otherBoard.steps + 1;
-        previous = otherBoard;
-
+        previousBoard = otherBoard;
     }
 
     public void reset() {
         // Nothing for now but you may have things to reset once you implement the solver.
+    }
+
+    public PuzzleBoard getPreviousBoard(){
+        return previousBoard;
     }
 
     @Override
@@ -118,10 +118,8 @@ public class PuzzleBoard {
     }
 
     public ArrayList<PuzzleBoard> neighbours() {
-
         int i, j=0;
-
-
+        // get empty tile
         for (i=0; i<NUM_TILES; i++){
             for (j=0; j<NUM_TILES; j++){
                 if (tiles.get(i * NUM_TILES + j) == null){
@@ -132,9 +130,8 @@ public class PuzzleBoard {
         }
         int nullX = j, nullY = i;
         ArrayList<PuzzleBoard> neighbourBoards = new ArrayList<>();
-
-
-
+        // evaluate neighbours
+        // find and add them in ArrayList
         for (i=0; i<4; i++){
             int x = nullX + NEIGHBOUR_COORDS[i][0];
             int y = nullY + NEIGHBOUR_COORDS[i][1];
@@ -159,8 +156,7 @@ public class PuzzleBoard {
             }
         }
         return count;
-
-
     }
 
 }
+
